@@ -6,6 +6,26 @@ let modalBody = document.getElementsByClassName("modal-body")[0];
 register.addEventListener("click", () => {
     modalTitle.innerHTML = "Register";
     modalBody.innerHTML = createRegisterForm();
+    let submitBtn = document.getElementById("submitBtn");
+
+    submitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        let inputArray = document.querySelectorAll("input");
+        let emptyField = false;
+        inputArray.forEach((element) => {
+          if (element.value === "") {
+            emptyField = true;
+            return;
+          }
+        });
+    
+        if (emptyField) {
+          let errorAll = document.getElementById("errorAll");
+          errorAll.innerText = "Please fill all of the fields";
+          return;
+        }
+        postform();
+    })
 });
 
 function createRegisterForm() {
@@ -54,5 +74,42 @@ function createRegisterForm() {
   </div>
 </form>
     
+
     `
+}
+
+function postform() {
+    let firstName = document.getElementById("firstName").value;
+    let lastName = document.getElementById("lastName").value;
+    let city = document.getElementById("city").value;
+    let email = document.getElementById("email").value;
+    let job = document.getElementById("job").value;
+    let password = document.getElementById("password").value;
+    const user = {
+        firstname : firstName,
+        lastname : lastName,
+        city : city,
+        email : email,
+        job : job,
+        password : password,
+        
+    };
+    console.log(user);
+
+    const postData = JSON.stringify(user);
+    
+  fetch("https://65d38018522627d50109056a.mockapi.io/api/users", {
+    method: "POST",
+    body: postData,
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  }).then((response) => {
+    console.log(response);
+    if (response.ok) {
+        let form = document.getElementById("myForm");
+        form.reset();
+    }
+    return response.json();
+  });
 }
